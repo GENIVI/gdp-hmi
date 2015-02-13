@@ -11,12 +11,9 @@
 # For further information see http://www.genivi.org/.
 #
 # List of changes:
-# 23.Jan.2015, Holger Behrens, written
-# 10.Feb.2015, Holger Behrens, defined SUBDIRS
+# 10.Feb.2015, Holger Behrens, written
 
-SUBDIRS = dbus
-
-EXTRA_DIST =               \
-    ivi-application.xml    \
-    ivi-controller.xml     \
-    ivi-hmi-controller.xml
+EXTRA_DIST = \
+    gdp-hmi-introspect.xml \
+    systemd-systemd1.xml \
+    systemd-login1.xml

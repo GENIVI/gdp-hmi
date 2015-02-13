@@ -13,6 +13,9 @@
 # List of changes:
 # 23.Jan.2015, Holger Behrens, written
 # 05.Feb.2015, Holger Behrens, added support for 'doc' making
+# 06.Feb.2015, Holger Behrens, added support for C++ source
+#                              updated CONTROL flag
+# 09.Feb.2015, Holger Behrens, add support for dbus/dbus-c++/glib
 
 AC_PREREQ([2.69])
 AC_INIT([genivi-demo-platform-hmi], [0.2],
@@ -25,6 +28,7 @@ AM_SILENT_RULES([yes])
 
 # Check for programs
 AC_PROG_CC
+AC_PROG_CXX
 
 # Initialize libtool
 LT_PREREQ([2.4])
@@ -32,9 +36,16 @@ LT_INIT([disable-static])
 
 PKG_PROG_PKG_CONFIG()
 
+PKG_CHECK_MODULES([DBUS], [
+	dbus-1
+	dbus-c++-1
+	dbus-c++-glib-1
+	])
 PKG_CHECK_MODULES([CONTROL], [
+	wayland-client >= 1.5.0
 	weston >= 1.5.0
-	libsystemd])
+	libsystemd
+	glib-2.0])
 PKG_CHECK_MODULES([PLUGIN], [weston >= 1.5.0 cairo xkbcommon])
 PKG_CHECK_MODULES([CLIENT], [
 	wayland-client >= 1.5.0
@@ -60,6 +71,10 @@ WAYLAND_PREFIX=`$PKG_CONFIG --variable=prefix wayland-client`
 AC_PATH_PROG([WAYLAND_SCANNER], [wayland-scanner],,
 	[${WAYLAND_PREFIX}/bin$PATH_SEPARATOR$PATH])
 
+# check for dbusxx-xml2cpp
+AC_PATH_PROG([XML2CPP], [dbusxx-xml2cpp])
+
+# handle arguments
 AM_CONDITIONAL(BUILD_DOCS, [test x$enable_documentation = xyes])
 if test "x$enable_documentation" = "xyes"; then
 	AC_PATH_PROG(DOXYGEN, doxygen)
@@ -75,9 +90,10 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([doc/Makefile])
 AC_CONFIG_FILES([doc/doxygen/Makefile])
 AC_CONFIG_FILES([protocol/Makefile])
+AC_CONFIG_FILES([protocol/dbus/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_SRCDIR(src/gdp-hmi-controller.c)
+AC_CONFIG_SRCDIR(src/gdp-hmi-controller.cpp)
 
 # enable C standard as published in 2011 as ISO/IEC 9899:2011 (known as C11)
 CFLAGS="$CFLAGS -std=c11"
