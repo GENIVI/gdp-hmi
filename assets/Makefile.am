@@ -12,6 +12,6 @@
 #
 # List of changes:
 # 23.Jan.2015, Holger Behrens, written
+# 06.Feb.2015, Holger Behrens, move assets into related 'app' sub-directory
 
-EXTRA_DIST =        \
-    GDP_Panel.png
+EXTRA_DIST = 

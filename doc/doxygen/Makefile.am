@@ -24,4 +24,4 @@ html: $(scanned_src_files) genivi-demo-platform-hmi.doxygen
 		echo "GENERATE_HTML=YES"; \
         echo "HTML_OUTPUT=html"; \
         echo "INPUT= $(scanned_src_files)"; \
-        ) | doxygen -
+        ) | $(DOXYGEN) -
