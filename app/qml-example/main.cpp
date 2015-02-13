@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2015 GENIVI Alliance
  *
- * This file is part of GENIVI AudioManager PoC.
+ * This file is part of GENIVI Demo Platform HMI.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License (MPL), v. 2.0. If a copy of the MPL was not distributed with this

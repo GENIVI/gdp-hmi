@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2015, GENIVI Alliance
 #
-# This file is part of GENIVI AudioManager PoC.
+# This file is part of GENIVI Demo Platform HMI.
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,6 +28,9 @@ QML_IMPORT_PATH =
 LIBS      += -lsystemd
 
 target.path = /usr/bin
+
+# enable C standard as published in 2011 as ISO/IEC 9899:2011 (known as C11)
+CONFIG     += c++11
 
 # Default rules for deployment.
 include(deployment.pri)
