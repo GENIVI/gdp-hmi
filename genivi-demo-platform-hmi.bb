@@ -17,4 +17,4 @@ inherit externalsrc
 EXTERNALSRC = "/home/holger/Projects/GDP/stash.wrs.com/genivi-demo-platform-hmi"
 
 # make sure this matches the version given in configure.ac
-PV = "0.3"
+PV = "0.4"

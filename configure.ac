@@ -18,7 +18,7 @@
 # 09.Feb.2015, Holger Behrens, add support for dbus/dbus-c++/glib
 
 AC_PREREQ([2.69])
-AC_INIT([genivi-demo-platform-hmi], [0.2],
+AC_INIT([genivi-demo-platform-hmi], [0.4],
         [http://bugs.genivi.org/], [genivi-demo-platform-hmi],
         [http://projects.genivi.org/genivi-demo-platform/])
 

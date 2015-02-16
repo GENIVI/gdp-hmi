@@ -17,6 +17,7 @@
  *                              introduced SIGUSR signal handling, pidfile
  * 09.Feb.2015, Holger Behrens, convert main loop into a glib main loop
  * 10.Feb.2015, Holger Behrens, added interface to systemd (via dbus-c++)
+ * 16.Feb.2015, Holger Behrens, correct gdp_surfaces[] usage
  */
 
 /*! \file gdp-hmi-controller.cpp
@@ -72,6 +73,73 @@ DBus::Glib::BusDispatcher dispatcher;   // dbus-c++ bus dispatcher (glib)
 SystemdService *gSystemdSession;        // systemd on session bus (d-bus)
 SystemdService *gSystemd;               // systemd on system  bus (d-bus)
 
+// database of well known surface and layer IDs as well as unit names
+struct gdp_surface_context gdp_surfaces[] = {
+    {   // 0 - GDP_PANEL
+        ILM_FALSE,
+        ILM_FALSE,
+        GDP_PANEL_SURFACE_ID,
+        GDP_PANEL_LAYER_ID,
+        GDP_PANEL_UNIT
+    },
+    {   // 1 - GDP_LAUNCHER
+        ILM_FALSE,
+        ILM_FALSE,
+        GDP_LAUNCHER_SURFACE_ID,
+        GDP_LAUNCHER_LAYER_ID,
+        GDP_LAUNCHER_UNIT
+    },
+    {   // 2 - GDP_BACKGROUND
+        ILM_FALSE,
+        ILM_FALSE,
+        GDP_BACKGROUND_SURFACE_ID,
+        GDP_BACKGROUND_LAYER_ID,
+        GDP_BACKGROUND_UNIT
+    },
+    {   // 3 - QML_EXAMPLE
+        ILM_FALSE,
+        ILM_FALSE,
+        QML_EXAMPLE_SURFACE_ID,
+        QML_EXAMPLE_LAYER_ID,
+        QML_EXAMPLE_UNIT
+    },
+    {   // 4 - AM_DEMO
+        ILM_FALSE,
+        ILM_FALSE,
+        AM_DEMO_SURFACE_ID,
+        AM_DEMO_LAYER_ID,
+        AM_DEMO_UNIT
+    },
+    {   // 5 - BROWSER_POC
+        ILM_FALSE,
+        ILM_FALSE,
+        BROWSER_POC_SURFACE_ID,
+        BROWSER_POC_LAYER_ID,
+        BROWSER_POC_UNIT
+    },
+    {   // 6 - FSA 
+        ILM_FALSE,
+        ILM_FALSE,
+        FSA_SURFACE_ID,
+        FSA_LAYER_ID,
+        FSA_UNIT
+    },
+    {   // 7 - MOCK_NAVIGATION
+        ILM_FALSE,
+        ILM_FALSE,
+        MOCK_NAVIGATION_SURFACE_ID,
+        MOCK_NAVIGATION_LAYER_ID,
+        MOCK_NAVIGATION_UNIT
+    },
+    {   // 8 - INPUT_EVENT_EXAMPLE
+        ILM_FALSE,
+        ILM_FALSE,
+        INPUT_EVENT_EXAMPLE_SURFACE_ID,
+        INPUT_EVENT_EXAMPLE_LAYER_ID,
+        INPUT_EVENT_EXAMPLE_UNIT
+    },
+};
+const int gdp_surfaces_num = sizeof gdp_surfaces / sizeof gdp_surfaces[0];
 
 /**
  * \brief creates a PID file
@@ -154,7 +222,7 @@ static void layer_create(void)
             sd_journal_print(LOG_DEBUG, "Debug: Screen ID[%u] = %d\n",
                 i, pIDs[i]);
         }
-        screenID = 0;   // always use screen with the ID 0
+        screenID = 0;   // FIXME: always use screen with the ID 0
                         // (limitation of ivi-shell at time of this writing)
     }
     sd_journal_print(LOG_INFO,
@@ -222,6 +290,34 @@ static void layer_create(void)
 }
 
 /**
+ * \brief mark surface as visible
+ *
+ * This function does mark the surface \p surfaceNum visible and all the
+ * other surfaces available invisible.
+ *
+ * \param   surfaceNum  The GDP surface number to mark as visible.
+ */
+static void surface_mark_visible(const int surfaceNum)
+{
+    // handling special case of panel
+    if (GDP_PANEL == surfaceNum)
+        return;
+
+    for (int count = 0; count < gdp_surfaces_num; count++) {
+        if (count == surfaceNum) {
+            gdp_surfaces[count].visible = ILM_TRUE;
+        } else {
+            gdp_surfaces[count].visible = ILM_FALSE;
+        }
+    }
+
+    // exception handling (panel is visible too, if !launcher surface)
+    if (GDP_LAUNCHER != surfaceNum) {
+        gdp_surfaces[GDP_PANEL].visible = ILM_TRUE;
+    }
+}
+
+/**
  * \brief show the launcher surface
  *
  * This function does control the launcher surface given by \p gdp_surface.
@@ -270,12 +366,13 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
         layerIdArray, 1);
 
     callResult = ilm_commitChanges();
+    surface_mark_visible(GDP_LAUNCHER);
 }
 
 /**
  * \brief control the IVI surface
  *
- * This function does control the surface \p gdp_surface.
+ * This function does control the surface \p index.
  * Currently the surface is added to its assigned layer,
  * the layer together with the layer holding the 'panel'
  * are brought into view on the screen and assigned input focus.
@@ -292,24 +389,25 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
  *   10 | EGL Mock Navigation
  * 5100 | EGL Input Example
  *
- * \param   gdp_surfaces    The GDP surface/layer context to be controlled.
+ * \param   index           The index into the gdp_surfaces[] database.
  */
-static void surface_control(struct gdp_surface_context gdp_surface)
+void surface_control(const int index)
 {
+    const struct gdp_surface_context gdp_surface = gdp_surfaces[index];
     ilmErrorTypes callResult = ILM_FAILED;
     t_ilm_surface surfaceIdArray[] = {GDP_BACKGROUND_SURFACE_ID};
     t_ilm_layer   layerIdArray[]   = {GDP_BACKGROUND_LAYER_ID,
                                       GDP_PANEL_LAYER_ID};
 
-    sd_journal_print(LOG_DEBUG, "surface_control"
+    sd_journal_print(LOG_DEBUG, "surface_control - index = %d"
         "(surface = %u, layer = %u)\n",
-        gdp_surface.id_surface, gdp_surface.id_layer);
+        index, gdp_surface.id_surface, gdp_surface.id_layer);
 
     surfaceIdArray[0] = gdp_surface.id_surface;
     layerIdArray[0] = gdp_surface.id_layer;
 
     switch(gdp_surface.id_surface) {
-        case GDP_PANEL_SURFACE_ID:    // Panel
+        case GDP_PANEL_SURFACE_ID:           // Panel
             callResult = ilm_surfaceSetDestinationRectangle(
                 gdp_surface.id_surface, 0, 0, screenWidth, panelHeight);
             callResult = ilm_surfaceSetVisibility(
@@ -335,24 +433,25 @@ static void surface_control(struct gdp_surface_context gdp_surface)
                 ILM_TRUE);
             callResult = ilm_commitChanges();
             break;
-        case GDP_LAUNCHER_SURFACE_ID:    // GDP HMI / Launcher
+        case GDP_LAUNCHER_SURFACE_ID:        // GDP HMI / Launcher
             launcher_show(gdp_surface);
             break;
-        case GDP_BACKGROUND_SURFACE_ID:    // Background / Logo
+        case GDP_BACKGROUND_SURFACE_ID:      // Background / Logo
             // fall-through
-        case QML_EXAMPLE_SURFACE_ID:    // QML Example
+        case QML_EXAMPLE_SURFACE_ID:         // QML Example
             // fall-through
-        case AM_DEMO_SURFACE_ID:   // AudioManager PoC/Demo
+        case AM_DEMO_SURFACE_ID:             // Audio Manager Demo
             // fall-through
-        case BROWSER_POC_SURFACE_ID:   // Browser PoC
+        case BROWSER_POC_SURFACE_ID:         // Browser PoC
             // fall-through
-        case FSA_SURFACE_ID:   // FSA PoC
+        case FSA_SURFACE_ID:                 // FSA PoC
             // fall-through
-        case MOCK_NAVIGATION_SURFACE_ID:   // EGL Mock Navigation
+        case MOCK_NAVIGATION_SURFACE_ID:     // EGL Mock Navigation
             // fall-through
         case INPUT_EVENT_EXAMPLE_SURFACE_ID: // EGL Input Example
             callResult = ilm_surfaceSetDestinationRectangle(
-                gdp_surface.id_surface, 0, 0, screenWidth, screenHeight - panelHeight);
+                gdp_surface.id_surface, 0, 0, screenWidth,
+                screenHeight - panelHeight);
             callResult = ilm_surfaceSetVisibility(
                 gdp_surface.id_surface, ILM_TRUE);
             callResult = ilm_surfaceSetOpacity(
@@ -380,6 +479,7 @@ static void surface_control(struct gdp_surface_context gdp_surface)
                 layerIdArray, 2);
 
             callResult = ilm_commitChanges();
+            surface_mark_visible(index);
             break;
         default:
             sd_journal_print(LOG_DEBUG,
@@ -406,8 +506,7 @@ static void surfaces_appear_check(t_ilm_int length, t_ilm_surface* pArray)
     // check for appearance
     for (int i = 0; i < length; i++) {
         // check out list of expected surface IDs 'gdp_surfaces'
-        for (int count = 0;
-            count < sizeof gdp_surfaces / sizeof gdp_surfaces[0]; count++) {
+        for (int count = 0; count < gdp_surfaces_num; count++) {
             if (pArray[i] == gdp_surfaces[count].id_surface) {
                 // check if surface is already known
                 if (ILM_TRUE == gdp_surfaces[count].created)
@@ -418,7 +517,7 @@ static void surfaces_appear_check(t_ilm_int length, t_ilm_surface* pArray)
                     "Debug: new surface id: %i (for layer: %i)\n",
                     gdp_surfaces[count].id_surface,
                     gdp_surfaces[count].id_layer);
-                surface_control(gdp_surfaces[count]);
+                surface_control(count);
             }
         } // inner for-loop
     } // outer for-loop
@@ -439,8 +538,7 @@ static void surfaces_disappear_check(t_ilm_int length, t_ilm_surface* pArray)
         return;
 
     // check for disappearance
-    for (int count = 0;
-        count < sizeof gdp_surfaces / sizeof gdp_surfaces[0]; count++) {
+    for (int count = 0; count < gdp_surfaces_num; count++) {
         t_ilm_bool found = ILM_FALSE;
 
         for (int i = 0; i < length; i++) {
@@ -456,6 +554,12 @@ static void surfaces_disappear_check(t_ilm_int length, t_ilm_surface* pArray)
                 "Debug: surface id: %i disappeared (from layer: %i)\n",
                 gdp_surfaces[count].id_surface,
                 gdp_surfaces[count].id_layer);
+            // in case this surface was currently in sight
+            if (ILM_TRUE == gdp_surfaces[count].visible) {
+                // show the background instead
+                gdp_surfaces[count].visible = ILM_FALSE;
+                surface_control(GDP_BACKGROUND);
+            }
         }
     } // outer for-loop
 }
@@ -524,15 +628,15 @@ static void sig_handler(int signo)
             g_main_loop_quit(gMainLoop); // stop the main loop in main()
             break;
         case SIGUSR1:
-            if (ILM_TRUE == gdp_surfaces[1].created) {
-                launcher_show(gdp_surfaces[1]);
+            if (ILM_TRUE == gdp_surfaces[GDP_LAUNCHER].created) {
+                launcher_show(gdp_surfaces[GDP_LAUNCHER]);
             }
             sd_journal_print(LOG_DEBUG, "Debug: show launcher (%s)\n",
-                (ILM_TRUE == gdp_surfaces[1].created) ? "true" : "false");
+                (ILM_TRUE == gdp_surfaces[GDP_LAUNCHER].created) ? "true" : "false");
             break;
         case SIGUSR2:
-            if (ILM_TRUE == gdp_surfaces[2].created) {
-                surface_control(gdp_surfaces[2]);
+            if (ILM_TRUE == gdp_surfaces[GDP_BACKGROUND].created) {
+                surface_control(GDP_BACKGROUND);
             }
             sd_journal_print(LOG_DEBUG, "Debug: show background\n");
             break;
@@ -633,7 +737,7 @@ int main(int argc, char * const* argv)
      * controller (us), to power off, which application (systemd unit) to
      * launch or give focus and bring to front/into view.
      *
-     * The 'home' button activation is signaled via USR1.
+     * The 'home' button activation is currently signaled via SIGUSR1.
      */
 
     DBus::default_dispatcher = &dispatcher;
