@@ -14,6 +14,7 @@
  * List of changes:
  * 06.Feb.2014, Holger Behrens, written, inspired by Qt5 documentation
  *          http://doc.qt.io/qt-5/qtqml-cppintegration-interactqmlfromcpp.html
+ * 16.feb.2015, Holger Behrens, cleanup signal handling
  */
 
 #ifndef GDP_HMI_PANEL_H
@@ -36,23 +37,14 @@ public:
     ~GDPPanelClass();
 
 public slots:
-    void cppSlot(const QString &msg) {
+    void homeSlot() {
     	int rtn = -1;
-        qDebug() << "Called the C++ slot with message:" << msg;
         rtn = kill(m_hmiControllerPid, SIGUSR1); // show launcher
         if (-1 == rtn) {
 	        sd_journal_print(LOG_ERR,
 	        	"Error: Signaling PID (%d) failed (SIGUSR1).\n",
 	        	m_hmiControllerPid);
         }
-        #if 0
-        rtn = kill(m_hmiControllerPid, SIGUSR2); // show background
-        if (-1 == rtn) {
-	        sd_journal_print(LOG_ERR,
-	        	"Error: Signaling PID (%d) failed (SIGUSR2).\n",
-	        	m_hmiControllerPid);
-        }
-        #endif
     }
 
 private:

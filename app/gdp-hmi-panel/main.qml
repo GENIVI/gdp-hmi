@@ -13,7 +13,7 @@
  *
  * List of changes:
  * 06.Feb.2015, Holger Behrens, written based on template created by QtCreator
- *
+ * 16.Feb.2015, Holger Behrens, cleanup signal and image handling
  */
 
 import QtQuick 2.3
@@ -25,7 +25,7 @@ Rectangle {
     width: 1024
     height: 68
 
-    signal qmlSignal(string msg)
+    signal homeSignal()
 
     Image {
         id: background_image
@@ -37,17 +37,19 @@ Rectangle {
         id: home_button
         width: 50
         height: 50
+        visible: true
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 14
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
-        iconName: "HomeIcon"
-        iconSource: "file:///usr/share/gdp/GDP_Square.png"
-        onClicked: {
-            console.log("homeButton clicked")
-            gdp_panel.qmlSignal("homeButton")
+        onClicked: gdp_panel.homeSignal()
+        Image {
+            id: home_image
+            fillMode: Image.PreserveAspectFit
+            anchors.fill: parent
+            source: "file:///usr/share/gdp/GDP_Quadrat.png"
         }
     }
 
@@ -63,4 +65,3 @@ Rectangle {
         anchors.rightMargin: 8
     }
 }
-

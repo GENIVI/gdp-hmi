@@ -20,9 +20,7 @@ FILES_${PN} += "\
 
 do_install_append() {
 	install -d ${D}${datadir}/gdp
-	install -m 0444 ${S}/assets/GDP_Square.png \
-					${D}${datadir}/gdp/GDP_Square.png
-	install -m 0444 ${S}/assets/GDP_Hamburger_white.png \
-	                ${D}${datadir}/gdp/GDP_Hamburger_white.png
+	install -m 0444 ${S}/assets/GDP_Quadrat.png \
+					${D}${datadir}/gdp/GDP_Quadrat.png
 	install -m 0444 ${S}/assets/GDP_Panel.png ${D}${datadir}/gdp/GDP_Panel.png
 }

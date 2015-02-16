@@ -13,7 +13,7 @@
  *
  * List of changes:
  * 06.Feb.2015, Holger Behrens, written based on template created by QtCreator
- *
+ * 16.feb.2015, Holger Behrens, cleanup signal handling
  */
 
 #include <QApplication>
@@ -38,8 +38,7 @@ int main(int argc, char *argv[])
     object = (QObject *)view.rootObject();
 
     GDPPanelClass panel;
-    QObject::connect(object, SIGNAL(qmlSignal(QString)),
-                     &panel, SLOT(cppSlot(QString)));
+    QObject::connect(object, SIGNAL(homeSignal()), &panel, SLOT(homeSlot()));
 
     view.setProperty("IVI-Surface-ID", GDP_PANEL_SURFACE_ID);
     view.show();
