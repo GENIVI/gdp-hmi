@@ -13,6 +13,8 @@
  *
  * List of changes:
  * 06.Feb.2015, Holger Behrens, written
+ * 20.Feb.2015, Holger Behrens, update icon file path to point to new images
+ *                              reset "Browser PoC" unit to "demoui.service"
  */
 
 import QtQuick 2.3
@@ -27,7 +29,7 @@ ListModel {
     ListElement {
         name: "Browser PoC"
         icon: "file://usr/share/gdp/GDP_Browser_Button.png"
-        unit: "browser.service"
+        unit: "demoui.service"
         description: "Browser PoC Description (TBD)"
     }
     ListElement {
