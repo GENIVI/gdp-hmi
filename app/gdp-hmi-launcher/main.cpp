@@ -13,6 +13,7 @@
  *
  * List of changes:
  * 06.Feb.2015, Holger Behrens, written based on template created by QtCreator
+ * 20.Feb.2015, Holger Behrens, fixed typo in debug message
  */
 
 #include <QApplication>
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
     setenv("QT_QPA_PLATFORM", "wayland", 1); // force to use wayland plugin
     setenv("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1", 1);
 
-    sd_journal_print(LOG_DEBUG, "GDP: panel surface (id=%u)",
+    sd_journal_print(LOG_DEBUG, "GDP: launcher surface (id=%u)",
         GDP_LAUNCHER_SURFACE_ID);
 
     QObject *object;
@@ -44,7 +45,6 @@ int main(int argc, char *argv[])
                      &launcher, SLOT(hmiRequestOffSlot()));
 
     view.setProperty("IVI-Surface-ID", GDP_LAUNCHER_SURFACE_ID);
-	//view.setColor(QColor(Qt::transparent));
     view.show();
     return app.exec();
 }
