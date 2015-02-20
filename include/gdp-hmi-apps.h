@@ -14,6 +14,7 @@
  * List of changes:
  * 11.Feb.2015, Holger Behrens, written
  * 16.Feb.2015, Holger Behrens, added generic identifier
+ * 20.Feb.2015, Holger Behrens, updated BROWSER_POC_UNIT
  */
 
 #ifndef GDP_HMI_APP_H
@@ -41,30 +42,30 @@
 
 #define AM_DEMO                         4
 #define AM_DEMO_SURFACE_ID              20
-#define AM_DEMO_LAYER_ID                300
+#define AM_DEMO_LAYER_ID                400
 #define AM_DEMO_UNIT                    "AudioManager_PoC.service"
 
 #define BROWSER_POC                     5
 #define BROWSER_POC_SURFACE_ID          30
-#define BROWSER_POC_LAYER_ID            400
-#define BROWSER_POC_UNIT                "browser.service"
+#define BROWSER_POC_LAYER_ID            500
+#define BROWSER_POC_UNIT                "demoui.service"
 
 #define FSA                             6
 #define FSA_SURFACE_ID                  40
-#define FSA_LAYER_ID                    500
+#define FSA_LAYER_ID                    600
 #define FSA_UNIT                        "fsa.service"
 
 #define MOCK_NAVIGATION                 7
 #define MOCK_NAVIGATION_SURFACE_ID      10
-#define MOCK_NAVIGATION_LAYER_ID        600
+#define MOCK_NAVIGATION_LAYER_ID        700
 #define MOCK_NAVIGATION_UNIT            "EGLWLMockNavigation.service"
 
 #define INPUT_EVENT_EXAMPLE             8
 #define INPUT_EVENT_EXAMPLE_SURFACE_ID  5100
-#define INPUT_EVENT_EXAMPLE_LAYER_ID    700
+#define INPUT_EVENT_EXAMPLE_LAYER_ID    800
 #define INPUT_EVENT_EXAMPLE_UNIT        "EGLWLInputEventExample.service"
 
-#define GDP_MAX_LAYER_ID                800
+#define GDP_MAX_LAYER_ID                900
 #define GDP_LAYER_ID_INCR               100
 
 #endif // GDP_HMI_APP_H

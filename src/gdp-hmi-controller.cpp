@@ -18,6 +18,7 @@
  * 09.Feb.2015, Holger Behrens, convert main loop into a glib main loop
  * 10.Feb.2015, Holger Behrens, added interface to systemd (via dbus-c++)
  * 16.Feb.2015, Holger Behrens, correct gdp_surfaces[] usage
+ * 20.Feb.2015, Holger Behrens, reflect new layer assignment in comment made
  */
 
 /*! \file gdp-hmi-controller.cpp
@@ -190,12 +191,12 @@ int create_pid_file(const char *progName, const char *pidFile)
  * panel               |    0
  * launcher            |   100
  * background          |   200
- * AM PoC              |   300
- * Browser PoC         |   400
- * FSA PoC             |   500
- * MockNavigation      |   600
- * InputEventExample   |   700
- *
+ * QML Example         |   300
+ * AM PoC              |   400
+ * Browser PoC         |   500
+ * FSA PoC             |   600
+ * MockNavigation      |   700
+ * InputEventExample   |   800
  */
 static void layer_create(void)
 {
@@ -361,7 +362,8 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
         ILM_TRUE);
     callResult = ilm_commitChanges();
 
-    sd_journal_print(LOG_DEBUG, "launcher_show - render order - screen\n");
+    sd_journal_print(LOG_DEBUG, "launcher_show - render order - screen %u\n",
+        screenID);
     callResult = ilm_displaySetRenderOrder((t_ilm_display)screenID,
         layerIdArray, 1);
 
