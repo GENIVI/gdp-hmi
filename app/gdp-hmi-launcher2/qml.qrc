@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>gdp-hmi-launcher2.qml</file>
+	<file>content/ContentModel.qml</file>
+        <file>content/ListItem.qml</file>
+        <file>content/NMapEffect.qml</file>
+        <file>content/NMapLightSource.qml</file>
+	<file>content/PowerOffItem.qml</file>
+    </qresource>
+</RCC>

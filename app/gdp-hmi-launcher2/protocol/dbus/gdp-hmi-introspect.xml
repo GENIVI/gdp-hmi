@@ -1,0 +1,29 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+  "http://standards.freedesktop.org/dbus/1.0/introspect.dtd">
+<!--
+ * SPDX license identifier: MPL-2.0
+ *
+ * Copyright (C) 2015, GENIVI Alliance
+ *
+ * This file is part of GENIVI Demo Platform HMI.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * For further information see http://www.genivi.org/.
+ *
+ * List of changes:
+ * 16.Mar.2015, Seabstien Baudouin, written
+-->
+<node name="/org/genivi/gdp/hmi/controller">
+  <interface name="org.genivi.gdp.HMI_Controller">
+    <method name="GetId">
+      <arg type="x" name="pid" direction="out"/>
+    </method>
+    <method name="Show">
+      <arg type="s" name="unit" direction="in"/>
+      <arg type="s" name="status" direction="out"/>
+    </method>
+  </interface>
+</node>
