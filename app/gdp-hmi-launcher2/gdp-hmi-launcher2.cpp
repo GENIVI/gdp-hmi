@@ -25,7 +25,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#ifdef USE_DLT
+#include <dlt/dlt.h>
+DLT_IMPORT_CONTEXT(launcherTraceCtx);
+#else
 #include <systemd/sd-journal.h>
+#endif
 
 #include "gdp-hmi-launcher2.h"
 
@@ -36,7 +41,11 @@ static const char *GDP_DBUS_SERVICE_PATH = "/org/genivi/gdp/hmi/controller";
 GDPLauncherClass::GDPLauncherClass()
 : m_hmiControllerPid(-1)
 {
+#ifdef USE_DLT
+    DLT_LOG(launcherTraceCtx,DLT_LOG_INFO,DLT_STRING("Debug: GDPLauncherClass - dbus session.\n"));
+#else
     sd_journal_print(LOG_DEBUG, "Debug: GDPLauncherClass - dbus session.\n");
+#endif
 	m_controller = new org::genivi::gdp::HMI_Controller(GDP_DBUS_SERVICE_NAME,
 		GDP_DBUS_SERVICE_PATH, QDBusConnection::sessionBus(), this);
     m_timerId = startTimer(5000); // 5 second timer
@@ -50,6 +59,10 @@ void GDPLauncherClass::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
     if ( !(m_controller->isValid()) ) {
+#ifdef USE_DLT
+        DLT_LOG(launcherTraceCtx,DLT_LOG_INFO,DLT_STRING("Info: HMI Controller - disconnected.\n"));
+#else
         sd_journal_print(LOG_INFO, "Info: HMI Controller - disconnected.\n");
+#endif
     }
 }

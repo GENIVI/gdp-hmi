@@ -1,0 +1,12 @@
+GENIVI is providing Diagnostic Log and Trace component also called DLT. It is a
+reusable open source software component for standardized logging and tracing in
+infotainement ECUs based on the AUTOSAR 4.0 standard. The goal of DLT is the
+consolidation of the existing variety of logging and tracing protocols on one
+format.
+
+Launcher2 is also a way for GENIVI to show how to use DLT in a client point of
+view. It is advised to read the wiki page built to help using DLT.
+http://projects.genivi.org/diagnostic-log-trace/sites/projects.genivi.org.diagnostic-log-trace/files/dlt_user_manual.html
+
+In the case of Launcher2 the traces can be configured to use DLT enabling in
+.pro file the flag USE_DLT

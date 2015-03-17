@@ -31,13 +31,15 @@ SOURCES += \
 
 RESOURCES += qml.qrc
 
+DEFINES += USE_DLT=1
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
 # enable C standard as published in 2011 as ISO/IEC 9899:2011 (known as C11)
 CONFIG     += c++11
 
-LIBS       += -lsystemd
+LIBS       += -lsystemd -ldlt
 
 target.path = /usr/bin
 

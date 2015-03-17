@@ -6,7 +6,7 @@ HOMEPAGE = "http://projects.genivi.org/genivi-demo-platform/"
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
 
-DEPENDS = "qtbase qtdeclarative gdp-hmi-panel"
+DEPENDS = "qtbase qtdeclarative gdp-hmi-panel dlt-daemon"
 
 inherit qmake5
 inherit externalsrc
