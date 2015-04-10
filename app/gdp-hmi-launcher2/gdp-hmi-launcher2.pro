@@ -39,7 +39,7 @@ QML_IMPORT_PATH =
 # enable C standard as published in 2011 as ISO/IEC 9899:2011 (known as C11)
 CONFIG     += c++11
 
-LIBS       += -lsystemd -ldlt
+LIBS       += -lpersistence_client_library -lsystemd -ldlt
 
 target.path = /usr/bin
 

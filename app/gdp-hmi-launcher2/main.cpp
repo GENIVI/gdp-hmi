@@ -17,6 +17,7 @@
 #include <QGuiApplication>
 #include <QQuickView>
 #include <QtDBus>
+#include <QQmlContext>
 
 #ifdef USE_DLT
 #include <dlt/dlt.h>
@@ -49,21 +50,30 @@ int main(int argc, char* argv[])
 
     QObject *object;
     QGuiApplication app(argc,argv);
+    GDPLauncherClass launcher2;
+    QQuickView view;
 
-    QQuickView view(QUrl(QStringLiteral("qrc:/gdp-hmi-launcher2.qml")));
+    //Update QML GDPLauncher2 property
+    view.rootContext()->setContextProperty("GDPLauncher2", &launcher2);
 
+    //Load the QML file
+    view.setSource(QUrl(QStringLiteral("qrc:/gdp-hmi-launcher2.qml")));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     object = (QObject *)view.rootObject();
 
-    GDPLauncherClass launcher2;
+    //Connect signal and slot
     QObject::connect(object, SIGNAL(appSelectSignal(QString)),
             &launcher2, SLOT(hmiAppLaunchSlot(QString)));
     QObject::connect(object, SIGNAL(requestOffSignal()),
             &launcher2, SLOT(hmiRequestOffSlot()));
 
+    //Set Surface property value for controller
     view.setProperty("IVI-Surface-ID", GDP_LAUNCHER2_SURFACE_ID);
+
+    //let's show the view
     view.showFullScreen();
 
+    //let's start the App
     ret = app.exec();
 
 #ifdef USE_DLT

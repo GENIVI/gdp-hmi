@@ -28,6 +28,9 @@
 #include <sys/types.h>
 #include <systemd/sd-journal.h>
 
+#include <persistence_client_library.h>     /* Init/DeInit PCL                */
+#include <persistence_client_library_key.h> /* Access persistent data         */
+
 #include "gdp-hmi-introspect_interface.h"
 
 class GDPLauncherClass : public QObject
@@ -37,6 +40,21 @@ class GDPLauncherClass : public QObject
 public:
     GDPLauncherClass();
     ~GDPLauncherClass();
+    int readLastUserAppIndex();
+    void writeLastUserAppIndex(int index);
+
+    Q_INVOKABLE int getLastAppIndex() {
+        m_selectedAppIndex = readLastUserAppIndex();
+        return m_selectedAppIndex;
+    }
+
+    Q_INVOKABLE void setLastAppIndex(int index) {
+        if (index != m_selectedAppIndex) {
+            m_selectedAppIndex = index;
+        }
+        writeLastUserAppIndex(m_selectedAppIndex);
+    }
+
 
 public slots:
     void hmiRequestOffSlot() {
@@ -59,6 +77,7 @@ protected:
 private:
 	pid_t m_hmiControllerPid;
     int m_timerId;
+    int m_selectedAppIndex;
     org::genivi::gdp::HMI_Controller *m_controller;
 };
 

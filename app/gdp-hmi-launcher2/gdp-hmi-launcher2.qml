@@ -23,9 +23,29 @@ Item {
 
     width: 1024
     height: 768
+    property int lastIndex: GDPLauncher2.getLastAppIndex();
 
     signal appSelectSignal(string unit)
     signal requestOffSignal()
+
+    Timer {
+          id: timer
+          interval: 1000; running: false;
+          onTriggered: mainView.appSelectSignal(listModel.get(mainView.lastIndex).unit)
+    }
+
+    Component.onCompleted: {
+     if (mainView.lastIndex < pathView.count) {
+         //We have a valid Index so let's process it
+
+         //First postion the list to right Application
+         pathView.positionViewAtIndex(mainView.lastIndex, ListView.Beginning);
+
+         //Now let's start the Application
+         timer.running = true
+     }
+    }
+
 
     QtObject {
         id: settings
@@ -120,7 +140,9 @@ Item {
         source: "file://usr/share/gdp/arrow-right.png"
         MouseArea {
             anchors.fill: parent
-            onClicked: pathView.incrementCurrentIndex()
+            onClicked: {
+                pathView.incrementCurrentIndex()
+            }
         }
     }
 
@@ -133,7 +155,9 @@ Item {
         source: "file://usr/share/gdp/arrow-right.png"
         MouseArea {
             anchors.fill: parent
-            onClicked: pathView.decrementCurrentIndex()
+            onClicked: {
+                pathView.decrementCurrentIndex();
+            }
         }
     }
 

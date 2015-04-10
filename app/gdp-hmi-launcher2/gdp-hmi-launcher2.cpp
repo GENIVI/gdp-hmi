@@ -32,15 +32,23 @@ DLT_IMPORT_CONTEXT(launcherTraceCtx);
 #include <systemd/sd-journal.h>
 #endif
 
+
 #include "gdp-hmi-launcher2.h"
 
 static const char *GDP_HMI_PID_FILENAME  = "/var/run/gdp-hmi-controller.pid";
 static const char *GDP_DBUS_SERVICE_NAME = "org.genivi.gdp.hmi.controller";
 static const char *GDP_DBUS_SERVICE_PATH = "/org/genivi/gdp/hmi/controller";
 
+#define GDP_LAUNCHER2_LAST_APP_UNIT_DB_ID 0xFF
+#define GDP_LAUNCHER2_LAST_APP_UNIT_KEY "LastAppIndex"
+#define GDP_LAUNCHER2_USER 3
+#define GDP_LAUNCHER2_SEAT 2
+#define GDP_LAUNCHER2_INDEX_MAX 0xFF
+
 GDPLauncherClass::GDPLauncherClass()
 : m_hmiControllerPid(-1)
 {
+    int pcl_return;
 #ifdef USE_DLT
     DLT_LOG(launcherTraceCtx,DLT_LOG_INFO,DLT_STRING("Debug: GDPLauncherClass - dbus session.\n"));
 #else
@@ -49,10 +57,93 @@ GDPLauncherClass::GDPLauncherClass()
 	m_controller = new org::genivi::gdp::HMI_Controller(GDP_DBUS_SERVICE_NAME,
 		GDP_DBUS_SERVICE_PATH, QDBusConnection::sessionBus(), this);
     m_timerId = startTimer(5000); // 5 second timer
+
+    /* Initialize Persistence Client Library */
+    pcl_return = pclInitLibrary("Launcher", PCL_SHUTDOWN_TYPE_NORMAL | PCL_SHUTDOWN_TYPE_FAST);
+    if (pcl_return < 0) {
+#ifdef USE_DLT
+    DLT_LOG(launcherTraceCtx, DLT_LOG_INFO,
+            DLT_STRING("Launcher2: Failed to initialize PCL.");
+            DLT_STRING("Error: Unexpected PCL return.");
+            DLT_STRING("Return:"); DLT_INT(pcl_return));
+#else
+    sd_journal_print(LOG_DEBUG, "Launcher2: Failed to initialize PCL\n");
+#endif
+    return;
+    }
 }
 
 GDPLauncherClass::~GDPLauncherClass()
 {
+    int pcl_return;
+
+    /* Deinitialize the PCL */
+    pcl_return = pclDeinitLibrary();
+
+    if (pcl_return < 0) {
+#ifdef USE_DLT
+        DLT_LOG(launcherTraceCtx, DLT_LOG_INFO,
+                DLT_STRING("Launcher2: Failed to deinitialize PCL.");
+                DLT_STRING("Error: Unexpected PCL return.");
+                DLT_STRING("Return:"); DLT_INT(pcl_return));
+#else
+        sd_journal_print(LOG_DEBUG, "Launcher2: Failed to deinitialize PCL.\n");
+#endif
+    }
+}
+
+int GDPLauncherClass::readLastUserAppIndex()
+{
+    int pcl_return;
+    unsigned char value[8];
+    /* Get data from persistence */
+
+    pcl_return = pclKeyReadData(GDP_LAUNCHER2_LAST_APP_UNIT_DB_ID,
+            GDP_LAUNCHER2_LAST_APP_UNIT_KEY,
+            GDP_LAUNCHER2_USER,
+            GDP_LAUNCHER2_SEAT,
+            value,
+            sizeof(value));
+    if (pcl_return != sizeof(value)) {
+#ifdef USE_DLT
+        DLT_LOG(launcherTraceCtx, DLT_LOG_INFO,
+                DLT_STRING("Launcher2: Failed to read Last Application Unit.");
+                DLT_STRING("Error: Unexpected PCL return.");
+                DLT_STRING("Return:"); DLT_INT(pcl_return));
+#else
+        sd_journal_print(LOG_DEBUG, "Launcher2: Failed to read Last Application Unit.\n");
+#endif
+        return GDP_LAUNCHER2_INDEX_MAX;
+    }
+
+    return atoi((char*)value);
+}
+
+
+void GDPLauncherClass::writeLastUserAppIndex(int index)
+{
+    int pcl_return;
+    unsigned char value[8];
+
+    sprintf((char*)value, "%d", index);
+    /* Set data to persistence */
+
+    pcl_return = pclKeyWriteData(GDP_LAUNCHER2_LAST_APP_UNIT_DB_ID,
+            GDP_LAUNCHER2_LAST_APP_UNIT_KEY,
+            GDP_LAUNCHER2_USER,
+            GDP_LAUNCHER2_SEAT,
+            value,
+            sizeof(value));
+    if (pcl_return != sizeof(value)) {
+#ifdef USE_DLT
+        DLT_LOG(launcherTraceCtx, DLT_LOG_INFO,
+                DLT_STRING("Launcher2: Failed to write Last Application Unit.");
+                DLT_STRING("Error: Unexpected PCL return.");
+                DLT_STRING("Return:"); DLT_INT(pcl_return));
+#else
+        sd_journal_print(LOG_DEBUG, "Launcher2: Failed to write Last Application Unit.\n");
+#endif
+    }
 }
 
 void GDPLauncherClass::timerEvent(QTimerEvent *event)

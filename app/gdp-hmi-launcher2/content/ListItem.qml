@@ -56,8 +56,10 @@ Item {
         anchors.fill: parent
         onClicked: {
             if (isSelected) {
+                //Save the index for Last User Mode
+                GDPLauncher2.setLastAppIndex(model.index);
                 // Open the item
-                mainView.appSelectSignal(model.unit)
+                mainView.appSelectSignal(model.unit);
             } else {
                 pathView.currentIndex = model.index;
             }
