@@ -50,10 +50,10 @@ int64_t HmiService::GetId()
 
 std::string HmiService::Show(const std::string &unit)
 {
-    if (0 == unit.compare(0, 15, "poweroff.target")) {
+    if (0 == unit.compare(0, 16, "PowerOff.service")) {
         sd_journal_print(LOG_DEBUG, "HmiService::Show() - %s (match)\n",
             unit.c_str());
-        std::string path = gSystemd->StartUnit(unit, "replace");
+        std::string path = gSystemdSession->StartUnit(unit, "replace");
     } else {
         sd_journal_print(LOG_DEBUG, "HmiService::Show() - %s\n",
             unit.c_str());

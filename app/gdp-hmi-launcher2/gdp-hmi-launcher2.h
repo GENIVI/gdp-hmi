@@ -58,7 +58,7 @@ public:
 
 public slots:
     void hmiRequestOffSlot() {
-        QString unit = QStringLiteral("poweroff.target");
+        QString unit = QStringLiteral("PowerOff.service");
         QString status = m_controller->Show(unit);
         sd_journal_print(LOG_DEBUG,
             "DEBUG: controller->Show(\"%s\") -> %s\n",
