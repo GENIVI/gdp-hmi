@@ -43,6 +43,7 @@
 #include <ilm/ilm_types.h>
 #include <ilm/ilm_client.h>
 #include <ilm/ilm_control.h>
+#include <ilm/ilm_input.h>
 
 #include "wayland-util.h"
 #include "ivi-controller-client-protocol.h"
@@ -352,7 +353,7 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
         ILM_INPUT_DEVICE_TOUCH   |
         ILM_INPUT_DEVICE_KEYBOARD,
         ILM_TRUE);
-    callResult = ilm_SetKeyboardFocusOn(gdp_surface.id_surface);
+    callResult = ilm_setInputFocus(surfaceIdArray, 1, IVI_CONTROLLER_SURFACE_INPUT_DEVICE_KEYBOARD, ILM_TRUE);
     callResult = ilm_commitChanges();
 
     sd_journal_print(LOG_DEBUG, "launcher_show - render order - layer\n");
@@ -424,7 +425,7 @@ void surface_control(const int index)
                 ILM_INPUT_DEVICE_TOUCH   |
                 ILM_INPUT_DEVICE_KEYBOARD,
                 ILM_TRUE);
-            callResult = ilm_SetKeyboardFocusOn(gdp_surface.id_surface);
+            callResult = ilm_setInputFocus(surfaceIdArray, 1, IVI_CONTROLLER_SURFACE_INPUT_DEVICE_KEYBOARD, ILM_TRUE);
             callResult = ilm_commitChanges();
             sd_journal_print(LOG_DEBUG, "surface_control - render order - layer\n");
             callResult = ilm_layerSetDestinationRectangle(gdp_surface.id_layer,
@@ -466,7 +467,8 @@ void surface_control(const int index)
                 ILM_INPUT_DEVICE_TOUCH   |
                 ILM_INPUT_DEVICE_KEYBOARD,
                 ILM_TRUE);
-            callResult = ilm_SetKeyboardFocusOn(gdp_surface.id_surface);
+
+            callResult = ilm_setInputFocus(surfaceIdArray, 1, IVI_CONTROLLER_SURFACE_INPUT_DEVICE_KEYBOARD, ILM_TRUE);
             callResult = ilm_commitChanges();
 
             sd_journal_print(LOG_DEBUG, "surface_control - render order - layer\n");

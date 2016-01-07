@@ -59,12 +59,11 @@ PKG_CHECK_MODULES([CLIENT], [
 
 # Check for wayland-ivi-extension
 AC_CHECK_HEADERS([ilm/ilm_types.h])
-AC_CHECK_LIB(ilmClient, ilm_UpdateInputEventAcceptanceOn,
-	[ILM_LIBS="-lilmCommon -lilmClient"],
-	[AC_MSG_ERROR([Can't find correct ilmClient library.])])
-AC_CHECK_LIB(ilmControl, ilm_SetKeyboardFocusOn,
-	[ILM_LIBS="$ILM_LIBS -lilmControl"],
-	[AC_MSG_ERROR([Can't find correct ilmControl library.])])
+AC_CHECK_LIB(ilmInput, ilm_setInputAcceptanceOn, [],
+	[AC_MSG_ERROR([Can't find correct ilmInput library.])])
+AC_CHECK_LIB(ilmInput, ilm_setInputFocus, [],
+	[AC_MSG_ERROR([Can't find correct ilmInput library.])])
+ILM_LIBS="-lilmCommon -lilmControl -lilmInput"
 AC_SUBST(ILM_LIBS)
 
 WAYLAND_PREFIX=`$PKG_CONFIG --variable=prefix wayland-client`
