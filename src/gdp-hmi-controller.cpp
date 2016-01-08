@@ -332,6 +332,8 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
     ilmErrorTypes callResult = ILM_FAILED;
     t_ilm_surface surfaceIdArray[] = {GDP_LAUNCHER_SURFACE_ID};
     t_ilm_layer   layerIdArray[]   = {GDP_LAUNCHER_LAYER_ID};
+    t_ilm_string* seats;
+    t_ilm_uint seat_count;
 
     sd_journal_print(LOG_DEBUG, "launcher_show"
         "(surface = %u, layer = %u)\n",
@@ -347,12 +349,11 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
         gdp_surface.id_surface, 1.0f);
     callResult = ilm_commitChanges();
     sd_journal_print(LOG_DEBUG, "launcher_show - input focus on\n");
-    callResult = ilm_UpdateInputEventAcceptanceOn(
-        gdp_surface.id_surface,
-        ILM_INPUT_DEVICE_POINTER |
-        ILM_INPUT_DEVICE_TOUCH   |
-        ILM_INPUT_DEVICE_KEYBOARD,
-        ILM_TRUE);
+    ilm_getInputDevices(ILM_INPUT_DEVICE_POINTER |
+                        ILM_INPUT_DEVICE_TOUCH   |
+                        ILM_INPUT_DEVICE_KEYBOARD,
+                        &seat_count, &seats);
+    callResult = ilm_setInputAcceptanceOn(gdp_surface.id_surface, seat_count, seats);
     callResult = ilm_setInputFocus(surfaceIdArray, 1, IVI_CONTROLLER_SURFACE_INPUT_DEVICE_KEYBOARD, ILM_TRUE);
     callResult = ilm_commitChanges();
 
@@ -401,6 +402,8 @@ void surface_control(const int index)
     t_ilm_surface surfaceIdArray[] = {GDP_BACKGROUND_SURFACE_ID};
     t_ilm_layer   layerIdArray[]   = {GDP_BACKGROUND_LAYER_ID,
                                       GDP_PANEL_LAYER_ID};
+    t_ilm_string* seats;
+    t_ilm_uint seat_count;
 
     sd_journal_print(LOG_DEBUG, "surface_control - index = %d"
         "(surface = %u, layer = %u)\n",
@@ -408,6 +411,7 @@ void surface_control(const int index)
 
     surfaceIdArray[0] = gdp_surface.id_surface;
     layerIdArray[0] = gdp_surface.id_layer;
+
 
     switch(gdp_surface.id_surface) {
         case GDP_PANEL_SURFACE_ID:           // Panel
@@ -419,12 +423,11 @@ void surface_control(const int index)
                 gdp_surface.id_surface, 1.0f);
             callResult = ilm_commitChanges();
             sd_journal_print(LOG_DEBUG, "surface_control (0) - input focus on\n");
-            callResult = ilm_UpdateInputEventAcceptanceOn(
-                gdp_surface.id_surface,
-                ILM_INPUT_DEVICE_POINTER |
-                ILM_INPUT_DEVICE_TOUCH   |
-                ILM_INPUT_DEVICE_KEYBOARD,
-                ILM_TRUE);
+            ilm_getInputDevices(ILM_INPUT_DEVICE_POINTER |
+                                ILM_INPUT_DEVICE_TOUCH   |
+                                ILM_INPUT_DEVICE_KEYBOARD,
+                                &seat_count, &seats);
+            callResult = ilm_setInputAcceptanceOn(gdp_surface.id_surface, seat_count, seats);
             callResult = ilm_setInputFocus(surfaceIdArray, 1, IVI_CONTROLLER_SURFACE_INPUT_DEVICE_KEYBOARD, ILM_TRUE);
             callResult = ilm_commitChanges();
             sd_journal_print(LOG_DEBUG, "surface_control - render order - layer\n");
@@ -461,12 +464,11 @@ void surface_control(const int index)
                 gdp_surface.id_surface, 1.0f);
             callResult = ilm_commitChanges();
             sd_journal_print(LOG_DEBUG, "surface_control - input focus on\n");
-            callResult = ilm_UpdateInputEventAcceptanceOn(
-                gdp_surface.id_surface,
-                ILM_INPUT_DEVICE_POINTER |
-                ILM_INPUT_DEVICE_TOUCH   |
-                ILM_INPUT_DEVICE_KEYBOARD,
-                ILM_TRUE);
+            ilm_getInputDevices(ILM_INPUT_DEVICE_POINTER |
+                                ILM_INPUT_DEVICE_TOUCH   |
+                                ILM_INPUT_DEVICE_KEYBOARD,
+                                &seat_count, &seats);
+            callResult = ilm_setInputAcceptanceOn(gdp_surface.id_surface, seat_count, seats);
 
             callResult = ilm_setInputFocus(surfaceIdArray, 1, IVI_CONTROLLER_SURFACE_INPUT_DEVICE_KEYBOARD, ILM_TRUE);
             callResult = ilm_commitChanges();
