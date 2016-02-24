@@ -334,6 +334,7 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
     t_ilm_layer   layerIdArray[]   = {GDP_LAUNCHER_LAYER_ID};
     t_ilm_string* seats;
     t_ilm_uint seat_count;
+    struct ilmSurfaceProperties props;
 
     sd_journal_print(LOG_DEBUG, "launcher_show"
         "(surface = %u, layer = %u)\n",
@@ -341,6 +342,10 @@ static void launcher_show(const struct gdp_surface_context gdp_surface)
 
     surfaceIdArray[0] = gdp_surface.id_surface;
     layerIdArray[0] = gdp_surface.id_layer;
+    callResult = ilm_getPropertiesOfSurface(gdp_surface.id_surface, &props);
+    callResult = ilm_surfaceSetSourceRectangle(
+        gdp_surface.id_surface, 0, 0,
+        props.origSourceWidth, props.origSourceHeight);
     callResult = ilm_surfaceSetDestinationRectangle(
         gdp_surface.id_surface, 0, 0, screenWidth, screenHeight);
     callResult = ilm_surfaceSetVisibility(
@@ -404,6 +409,7 @@ void surface_control(const int index)
                                       GDP_PANEL_LAYER_ID};
     t_ilm_string* seats;
     t_ilm_uint seat_count;
+    struct ilmSurfaceProperties props;
 
     sd_journal_print(LOG_DEBUG, "surface_control - index = %d"
         "(surface = %u, layer = %u)\n",
@@ -415,6 +421,11 @@ void surface_control(const int index)
 
     switch(gdp_surface.id_surface) {
         case GDP_PANEL_SURFACE_ID:           // Panel
+            callResult = ilm_getPropertiesOfSurface(
+                gdp_surface.id_surface, &props);
+            callResult = ilm_surfaceSetSourceRectangle(
+                gdp_surface.id_surface, 0, 0,
+                props.origSourceWidth, props.origSourceHeight);
             callResult = ilm_surfaceSetDestinationRectangle(
                 gdp_surface.id_surface, 0, 0, screenWidth, panelHeight);
             callResult = ilm_surfaceSetVisibility(
@@ -455,6 +466,11 @@ void surface_control(const int index)
         case MOCK_NAVIGATION_SURFACE_ID:     // EGL Mock Navigation
             // fall-through
         case INPUT_EVENT_EXAMPLE_SURFACE_ID: // EGL Input Example
+            callResult = ilm_getPropertiesOfSurface(
+                gdp_surface.id_surface, &props);
+            callResult = ilm_surfaceSetSourceRectangle(
+                gdp_surface.id_surface, 0, 0,
+                props.origSourceWidth, props.origSourceHeight);
             callResult = ilm_surfaceSetDestinationRectangle(
                 gdp_surface.id_surface, 0, 0, screenWidth,
                 screenHeight - panelHeight);
