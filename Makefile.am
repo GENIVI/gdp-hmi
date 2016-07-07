@@ -13,4 +13,5 @@
 # List of changes:
 # 23.Jan.2015, Holger Behrens, written
 
+ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = doc protocol src

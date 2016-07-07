@@ -23,7 +23,7 @@ AC_INIT([genivi-demo-platform-hmi], [0.4],
         [http://projects.genivi.org/genivi-demo-platform/])
 
 AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
-
+AC_CONFIG_MACRO_DIR([m4])
 AM_SILENT_RULES([yes])
 
 # Check for programs
