@@ -55,3 +55,5 @@ systemd1-client-glue.h: $(top_srcdir)/protocol/dbus/systemd-systemd1.xml
 
 login1-client-glue.h: $(top_srcdir)/protocol/dbus/systemd-login1.xml
 	$(XML2CPP) $< --proxy=$@
+
+-include $(top_srcdir)/git.mk

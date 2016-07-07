@@ -15,3 +15,5 @@
 
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = doc protocol src
+
+-include $(top_srcdir)/git.mk

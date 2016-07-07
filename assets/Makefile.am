@@ -15,3 +15,5 @@
 # 06.Feb.2015, Holger Behrens, move assets into related 'app' sub-directory
 
 EXTRA_DIST = 
+
+-include $(top_srcdir)/git.mk

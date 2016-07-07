@@ -20,3 +20,5 @@ EXTRA_DIST =               \
     ivi-application.xml    \
     ivi-controller.xml     \
     ivi-hmi-controller.xml
+
+-include $(top_srcdir)/git.mk

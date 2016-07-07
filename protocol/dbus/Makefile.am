@@ -17,3 +17,5 @@ EXTRA_DIST = \
     gdp-hmi-introspect.xml \
     systemd-systemd1.xml \
     systemd-login1.xml
+
+-include $(top_srcdir)/git.mk

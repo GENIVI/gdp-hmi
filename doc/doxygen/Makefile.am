@@ -25,3 +25,5 @@ html: $(scanned_src_files) genivi-demo-platform-hmi.doxygen
         echo "HTML_OUTPUT=html"; \
         echo "INPUT= $(scanned_src_files)"; \
         ) | $(DOXYGEN) -
+
+-include $(top_srcdir)/git.mk

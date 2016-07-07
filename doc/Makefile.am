@@ -14,3 +14,5 @@
 # 05.Feb.2015, Holger Behrens, written
 
 SUBDIRS = doxygen
+
+-include $(top_srcdir)/git.mk
