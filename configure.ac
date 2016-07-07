@@ -85,12 +85,14 @@ if test "x$enable_documentation" = "xyes"; then
 	AC_CONFIG_FILES([doc/doxygen/genivi-demo-platform-hmi.doxygen])
 fi
 
-AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([doc/Makefile])
-AC_CONFIG_FILES([doc/doxygen/Makefile])
-AC_CONFIG_FILES([protocol/Makefile])
-AC_CONFIG_FILES([protocol/dbus/Makefile])
-AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([
+Makefile
+doc/Makefile
+doc/doxygen/Makefile
+protocol/Makefile
+protocol/dbus/Makefile
+src/Makefile
+])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR(src/gdp-hmi-controller.cpp)
 
