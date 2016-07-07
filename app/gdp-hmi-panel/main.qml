@@ -1,9 +1,9 @@
 /**
  * SPDX license identifier: MPL-2.0
  *
- * Copyright (C) 2015 GENIVI Alliance
+ * Copyright (C) 2016 GENIVI Alliance
  *
- * This file is part of GENIVI Demo Platform HMI.
+ * This file is part of GENIVI Development Platform HMI.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
@@ -58,7 +58,7 @@ Rectangle {
         color: "#ffffff"
         style: Text.Normal
         font.pixelSize: 12
-        text: qsTr("Copyright © 2015, GENIVI Alliance")
+        text: qsTr("Copyright © 2016, GENIVI Alliance")
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         anchors.right: parent.right
