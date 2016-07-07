@@ -19,7 +19,7 @@
 
 AM_CPPFLAGS   = -I$(top_srcdir)/include
 BUILT_SOURCES = ivi-controller-client-protocol.h \
-                gdp-hmi-server-glue.h  \				
+                gdp-hmi-server-glue.h  \
                 gdp-hmi-client-glue.h  \
                 systemd1-client-glue.h \
                 login1-client-glue.h
